@@ -1,0 +1,5 @@
+name: Guardian
+version: '${project.version}'
+main: com.github.guardian.Guardian
+authors: [ hapily, _tud, hotpocket ]
+description: wip
