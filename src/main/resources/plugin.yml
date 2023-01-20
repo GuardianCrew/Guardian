@@ -1,5 +1,5 @@
 name: Guardian
 version: '${project.version}'
-main: com.github.guardian.Guardian
-authors: [ hapily, _tud, hotpocket ]
+main: com.github.guardiancrew.Guardian
+authors: [ The GuardianCrew ]
 description: wip
