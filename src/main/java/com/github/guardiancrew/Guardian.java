@@ -2,8 +2,10 @@ package com.github.guardiancrew;
 
 import com.github.guardiancrew.util.Version;
 import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ServiceLoader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +23,8 @@ public final class Guardian extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+
+        registerListeners();
     }
 
     @Override
@@ -57,4 +61,9 @@ public final class Guardian extends JavaPlugin {
         return minecraftVersion.compareTo(version) >= 0;
     }
 
+    private void registerListeners() {
+        ServiceLoader<Listener> loader = ServiceLoader.load(Listener.class, Listener.class.getClassLoader());
+        for (Listener listener : loader)
+            getServer().getPluginManager().registerEvents(listener, this);
+    }
 }
