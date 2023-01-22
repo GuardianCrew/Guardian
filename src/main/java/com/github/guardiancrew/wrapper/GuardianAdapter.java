@@ -14,10 +14,10 @@ public class GuardianAdapter {
 
     private static final Map<Player, GuardianPlayer> guardianPlayers = Collections.synchronizedMap(new HashMap<>());
 
-    public static GuardianPlayer wrapPlayer(Player bukkitPlayer) {
+    public static void wrapPlayer(Player bukkitPlayer) {
         // we'll do more stuff here later
         guardianPlayers.putIfAbsent(bukkitPlayer, new GuardianPlayer(bukkitPlayer));
-        return guardianPlayers.get(bukkitPlayer);
+        guardianPlayers.get(bukkitPlayer);
     }
 
     public static GuardianPlayer getPlayer(Player bukkitPlayer) {
