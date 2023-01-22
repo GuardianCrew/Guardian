@@ -4,16 +4,27 @@ import com.github.guardiancrew.util.Version;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.reflections.Reflections;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.ServiceLoader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public final class Guardian extends JavaPlugin {
 
     private static Guardian instance;
 
     private static Version minecraftVersion;
+
+    public static Guardian getInstance() {
+        return instance;
+    }
 
     @Override
     public void onLoad() {
@@ -30,10 +41,6 @@ public final class Guardian extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-    }
-
-    public static Guardian getInstance() {
-        return instance;
     }
 
     private static final Pattern bukkitVersionPattern = Pattern.compile("\\d+\\.\\d+(?:\\.\\d+)?");
@@ -61,9 +68,16 @@ public final class Guardian extends JavaPlugin {
         return minecraftVersion.compareTo(version) >= 0;
     }
 
-    private void registerListeners() {
-        ServiceLoader<Listener> loader = ServiceLoader.load(Listener.class, Listener.class.getClassLoader());
-        for (Listener listener : loader)
-            getServer().getPluginManager().registerEvents(listener, this);
+    private static void registerListeners() {
+        for (Class<?> c : new Reflections(getInstance().getClass().getPackageName() + ".listeners").getSubTypesOf(Listener.class)) {
+            try {
+                Listener listener = (Listener) c
+                        .getDeclaredConstructor()
+                        .newInstance();
+                getInstance().getServer().getPluginManager().registerEvents(listener, getInstance());
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

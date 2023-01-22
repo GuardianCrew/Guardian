@@ -3,3 +3,6 @@ version: '${project.version}'
 main: com.github.guardiancrew.Guardian
 authors: [ The GuardianCrew ]
 description: wip
+commands:
+  muteme:
+    description: Mutes yourself

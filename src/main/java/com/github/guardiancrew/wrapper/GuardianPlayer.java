@@ -1,7 +1,6 @@
 package com.github.guardiancrew.wrapper;
 
 import com.github.guardiancrew.punishment.Punishment;
-import lombok.Getter;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,7 +10,6 @@ import java.util.Date;
 public class GuardianPlayer {
 
     private final Player bukkitPlayer;
-    @Getter
     private boolean muted = false;
 
     GuardianPlayer(Player bukkitPlayer) {
@@ -20,6 +18,14 @@ public class GuardianPlayer {
 
     public Player getBukkitPlayer() {
         return bukkitPlayer;
+    }
+
+    public void setMuted(boolean muted) {
+        this.muted = muted;
+    }
+
+    public boolean isMuted() {
+        return muted;
     }
 
     public void punish(Punishment punishment) {
