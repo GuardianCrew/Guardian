@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Reflect {
 
-    public static Class<?>[] getClasses(String pkg, Class<?> clazz) throws ClassNotFoundException, URISyntaxException, IOException {
+    public static <T> Class<? extends T>[] getClasses(String pkg, Class<T> clazz) throws ClassNotFoundException, URISyntaxException, IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         List<Class<?>> classes = new ArrayList<>();
         String fileFormattedPkg = pkg.replace('.', '\\');
