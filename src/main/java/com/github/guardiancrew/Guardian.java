@@ -64,7 +64,7 @@ public final class Guardian extends JavaPlugin {
         return minecraftVersion.compareTo(version) >= 0;
     }
 
-    private static void registerListeners() {
+    private void registerListeners() {
         Guardian instance = getInstance();
         Class<?>[] classes;
         try {
