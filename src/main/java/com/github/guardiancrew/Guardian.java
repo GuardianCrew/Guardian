@@ -1,20 +1,16 @@
 package com.github.guardiancrew;
 
+import com.github.guardiancrew.util.Reflect;
 import com.github.guardiancrew.util.Version;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.reflections.Reflections;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.ServiceLoader;
+import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public final class Guardian extends JavaPlugin {
 
@@ -68,13 +64,20 @@ public final class Guardian extends JavaPlugin {
         return minecraftVersion.compareTo(version) >= 0;
     }
 
-    private static void registerListeners() {
-        for (Class<?> c : new Reflections(getInstance().getClass().getPackageName() + ".listeners").getSubTypesOf(Listener.class)) {
+    private void registerListeners() {
+        Class<?>[] classes;
+        try {
+            classes = Reflect.getClasses("com.github.guardiancrew.listeners", Listener.class);
+        } catch (ClassNotFoundException | URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
+        }
+        if (classes == null) return;
+        for (Class<?> c : classes) {
             try {
                 Listener listener = (Listener) c
                         .getDeclaredConstructor()
                         .newInstance();
-                getInstance().getServer().getPluginManager().registerEvents(listener, getInstance());
+               getServer().getPluginManager().registerEvents(listener, this);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
             }
