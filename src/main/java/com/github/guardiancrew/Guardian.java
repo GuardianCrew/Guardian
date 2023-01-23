@@ -78,7 +78,7 @@ public final class Guardian extends JavaPlugin {
                 Listener listener = (Listener) c
                         .getDeclaredConstructor()
                         .newInstance();
-               instance.getServer().getPluginManager().registerEvents(listener, instance);
+               getServer().getPluginManager().registerEvents(listener, this);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
             }
