@@ -65,7 +65,6 @@ public final class Guardian extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Guardian instance = getInstance();
         Class<?>[] classes;
         try {
             classes = Reflect.getClasses("com.github.guardiancrew.listeners", Listener.class);
