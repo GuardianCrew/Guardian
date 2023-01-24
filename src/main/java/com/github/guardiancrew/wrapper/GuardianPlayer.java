@@ -80,4 +80,5 @@ public class GuardianPlayer {
     public List<Punishment> getPunishments() {
         return punishments;
     }
+
 }
