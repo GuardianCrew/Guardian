@@ -60,4 +60,9 @@ public class GuardianPlayer {
             getBukkitPlayer().loadData();
         }
     }
+
+    public void sendMessage(String message) {
+        bukkitPlayer.sendMessage(message);
+    }
+
 }
