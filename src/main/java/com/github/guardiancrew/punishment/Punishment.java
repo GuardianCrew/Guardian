@@ -42,4 +42,5 @@ public class Punishment {
     public Instant getDate() {
         return date;
     }
+
 }
