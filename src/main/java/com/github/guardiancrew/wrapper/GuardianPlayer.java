@@ -81,4 +81,9 @@ public class GuardianPlayer {
         return punishments;
     }
 
+
+    public void sendMessage(String message) {
+        bukkitPlayer.sendMessage(message);
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.github.guardiancrew;
 
+import com.github.guardiancrew.command.commands.MuteCommand;
 import com.github.guardiancrew.util.Reflect;
 import com.github.guardiancrew.util.Version;
 import org.bukkit.Bukkit;
@@ -32,6 +33,7 @@ public final class Guardian extends JavaPlugin {
         instance = this;
 
         registerListeners();
+        registerCommands();
     }
 
     @Override
@@ -65,16 +67,15 @@ public final class Guardian extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Class<?>[] classes;
+        Class<? extends Listener>[] classes;
         try {
             classes = Reflect.getClasses("com.github.guardiancrew.listeners", Listener.class);
         } catch (ClassNotFoundException | URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
-        if (classes == null) return;
-        for (Class<?> c : classes) {
+        for (Class<? extends Listener> c : classes) {
             try {
-                Listener listener = (Listener) c
+                Listener listener = c
                         .getDeclaredConstructor()
                         .newInstance();
                getServer().getPluginManager().registerEvents(listener, this);
@@ -83,4 +84,14 @@ public final class Guardian extends JavaPlugin {
             }
         }
     }
+
+    private void registerCommands() {
+        new MuteCommand();
+//        try {
+//            Reflect.getClasses("com.github.guardiancrew.command.commands", Object.class);
+//        } catch (ClassNotFoundException | URISyntaxException | IOException e) {
+//            throw new RuntimeException(e);
+//        }
+    }
+
 }
