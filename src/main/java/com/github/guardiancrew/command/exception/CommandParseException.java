@@ -10,4 +10,12 @@ public class CommandParseException extends RuntimeException {
         super(message);
     }
 
+    public CommandParseException(Throwable cause) {
+        super(cause);
+    }
+
+    public CommandParseException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

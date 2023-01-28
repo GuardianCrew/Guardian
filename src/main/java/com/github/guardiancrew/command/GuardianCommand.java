@@ -3,12 +3,12 @@ package com.github.guardiancrew.command;
 import com.github.guardiancrew.command.argument.Argument;
 import com.github.guardiancrew.command.argument.ArgumentInfo;
 import com.github.guardiancrew.command.context.CommandContext;
+import com.github.guardiancrew.command.exception.CommandParseException;
+import com.github.guardiancrew.command.util.CompletionUtils;
 import com.github.guardiancrew.command.util.StringReader;
-import com.github.guardiancrew.wrapper.GuardianAdapter;
-import com.github.guardiancrew.wrapper.GuardianPlayer;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -42,14 +42,12 @@ public class GuardianCommand {
 
             @Override
             public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-                GuardianPlayer executor = sender instanceof Player ? GuardianAdapter.wrapPlayer(((Player) sender)) : null;
                 StringReader reader = new StringReader(String.join(" ", args));
-                return GuardianCommand.this.execute(executor, reader);
+                return GuardianCommand.this.execute(sender, commandLabel, reader);
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
-                GuardianPlayer executor = sender instanceof Player ? GuardianAdapter.wrapPlayer(((Player) sender)) : null;
                 int index = args.length - 1;
                 String input = args[index];
 
@@ -60,10 +58,10 @@ public class GuardianCommand {
                             return Collections.emptyList();
                         return subcommand.asBukkitCommand().tabComplete(sender, alias, Arrays.copyOfRange(args, argumentList.size() + 1, args.length));
                     }
-                    return Argument.sortCompletions(input, new ArrayList<>(subcommands.keySet()));
+                    return CompletionUtils.filterCompletions(input, new ArrayList<>(subcommands.keySet()));
                 }
 
-                return GuardianCommand.this.tabComplete(executor, input, argumentList.get(index).getArgument());
+                return GuardianCommand.this.tabComplete(sender, input, argumentList.get(index).getArgument());
             }
 
         };
@@ -72,21 +70,21 @@ public class GuardianCommand {
         return command;
     }
 
-    public boolean execute(GuardianPlayer executor, StringReader reader) {
-        ArgumentParser argumentParser = new ArgumentParser(executor, this);
-        CommandContext context = argumentParser.parse(reader);
-        if (argumentParser.hasError()) {
-            executor.sendMessage(argumentParser.getLastErrorMessage());
-            return true;
+    public boolean execute(CommandSender executor, String label, StringReader reader) {
+        ArgumentParser argumentParser = new ArgumentParser(executor, label, this);
+        try {
+            CommandContext context = argumentParser.parse(reader);
+            if (context == null)
+                return true;
+            executable.execute(executor, context);
+        } catch (CommandParseException e) {
+            executor.sendMessage(ChatColor.RED + e.getMessage());
         }
-        if (context == null)
-            return true;
-        executable.execute(executor, context);
         return true;
     }
 
-    public List<String> tabComplete(GuardianPlayer executor, String input, Argument<?> argument) {
-        return argument.tabComplete(new StringReader(input), executor);
+    public List<String> tabComplete(CommandSender executor, String input, Argument<?> argument) {
+        return argument.tabComplete(executor, new StringReader(input));
     }
 
     public String getName() {

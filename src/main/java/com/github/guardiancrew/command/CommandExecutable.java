@@ -1,11 +1,11 @@
 package com.github.guardiancrew.command;
 
 import com.github.guardiancrew.command.context.CommandContext;
-import com.github.guardiancrew.wrapper.GuardianPlayer;
+import org.bukkit.command.CommandSender;
 
 @FunctionalInterface
 public interface CommandExecutable {
 
-    boolean execute(GuardianPlayer executor, CommandContext context);
+    boolean execute(CommandSender executor, CommandContext context);
 
 }

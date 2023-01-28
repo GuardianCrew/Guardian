@@ -1,12 +1,12 @@
 package com.github.guardiancrew.command.argument;
 
 import com.github.guardiancrew.command.util.StringReader;
-import com.github.guardiancrew.wrapper.GuardianPlayer;
+import org.bukkit.command.CommandSender;
 
-public class ReasonArgument extends Argument<String> {
+public class ReasonArgument implements Argument<String> {
 
     @Override
-    public String parse(StringReader reader, GuardianPlayer executor) {
+    public String parse(CommandSender executor, StringReader reader) {
         if (!reader.canRead())
             return null;
 
