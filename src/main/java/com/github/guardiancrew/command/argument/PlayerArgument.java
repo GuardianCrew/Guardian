@@ -1,19 +1,21 @@
 package com.github.guardiancrew.command.argument;
 
 import com.github.guardiancrew.command.exception.CommandParseException;
+import com.github.guardiancrew.command.util.CompletionUtils;
 import com.github.guardiancrew.command.util.StringReader;
 import com.github.guardiancrew.wrapper.GuardianAdapter;
 import com.github.guardiancrew.wrapper.GuardianPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PlayerArgument extends Argument<GuardianPlayer> {
+public class PlayerArgument implements Argument<GuardianPlayer> {
 
     @Override
-    public GuardianPlayer parse(StringReader reader, GuardianPlayer executor) {
+    public GuardianPlayer parse(CommandSender executor, StringReader reader) {
         String playerName = reader.readPlayerName();
         Player bukkitPlayer = Bukkit.getPlayerExact(playerName);
         if (bukkitPlayer == null)
@@ -22,12 +24,12 @@ public class PlayerArgument extends Argument<GuardianPlayer> {
     }
 
     @Override
-    public List<String> tabComplete(StringReader reader, GuardianPlayer executor) {
+    public List<String> tabComplete(CommandSender executor, StringReader reader) {
         String playerName = reader.readPlayerName();
         List<String> playerNames = Bukkit.getOnlinePlayers().stream()
                 .map(Player::getName)
                 .collect(Collectors.toList());
-        return sortCompletions(playerName, playerNames);
+        return CompletionUtils.filterCompletions(playerName, playerNames);
     }
 
 }

@@ -8,12 +8,18 @@ import java.util.stream.Collectors;
 
 public class CommandContext {
 
+    private final String label;
     private final String input;
     private final Map<String, ParsedArgument<?>> arguments;
 
-    public CommandContext(String input, Map<String, ParsedArgument<?>> arguments) {
+    public CommandContext(String label, String input, Map<String, ParsedArgument<?>> arguments) {
+        this.label = label;
         this.input = input;
         this.arguments = arguments;
+    }
+
+    public String getLabel() {
+        return label;
     }
 
     public String getInput() {

@@ -76,12 +76,12 @@ public class StringReader {
     }
 
     public void skipWhitespace() {
-        readStringUntil(() -> Character.isWhitespace(peek()));
+        readUntil(() -> Character.isWhitespace(peek()));
     }
 
     public int readInt() throws CommandParseException {
         int start = cursor;
-        String number = readStringUntil(() -> isAllowedNumber(peek()));
+        String number = readUntil(() -> isAllowedNumber(peek()));
 
         if (number.isEmpty())
             throw new CommandParseException();
@@ -90,13 +90,13 @@ public class StringReader {
             return Integer.parseInt(number);
         } catch (NumberFormatException e) {
             cursor = start;
-            throw new CommandParseException();
+            throw new CommandParseException(e);
         }
     }
 
     public long readLong() throws CommandParseException {
         int start = cursor;
-        String number = readStringUntil(() -> isAllowedNumber(peek()));
+        String number = readUntil(() -> isAllowedNumber(peek()));
 
         if (number.isEmpty())
             throw new CommandParseException();
@@ -105,13 +105,13 @@ public class StringReader {
             return Long.parseLong(number);
         } catch (NumberFormatException e) {
             cursor = start;
-            throw new CommandParseException();
+            throw new CommandParseException(e);
         }
     }
 
     public float readFloat() throws CommandParseException {
         int start = cursor;
-        String number = readStringUntil(() -> isAllowedNumber(peek()));
+        String number = readUntil(() -> isAllowedNumber(peek()));
 
         if (number.isEmpty())
             throw new CommandParseException();
@@ -120,13 +120,13 @@ public class StringReader {
             return Float.parseFloat(number);
         } catch (NumberFormatException e) {
             cursor = start;
-            throw new CommandParseException();
+            throw new CommandParseException(e);
         }
     }
 
     public double readDouble() throws CommandParseException {
         int start = cursor;
-        String number = readStringUntil(() -> isAllowedNumber(peek()));
+        String number = readUntil(() -> isAllowedNumber(peek()));
 
         if (number.isEmpty())
             throw new CommandParseException();
@@ -135,12 +135,12 @@ public class StringReader {
             return Double.parseDouble(number);
         } catch (NumberFormatException e) {
             cursor = start;
-            throw new CommandParseException();
+            throw new CommandParseException(e);
         }
     }
 
     public String readUnquotedString() {
-        return readStringUntil(() -> isAllowedInUnquotedString(peek()));
+        return readUntil(() -> isAllowedInUnquotedString(peek()));
     }
 
     public String readQuotedString() throws CommandParseException {
@@ -165,14 +165,7 @@ public class StringReader {
     }
 
     public String readPlayerName() {
-        return readStringUntil(() -> isAllowedPlayerName(peek()));
-    }
-
-    public String readStringUntil(Supplier<Boolean> supplier) {
-        int start = cursor;
-        while (canRead() && supplier.get())
-            skip();
-        return string.substring(start, cursor);
+        return readUntil(() -> isAllowedPlayerName(peek()));
     }
 
     public String readStringUntil(char terminator) throws CommandParseException {
@@ -200,9 +193,15 @@ public class StringReader {
         throw new CommandParseException();
     }
 
+    public String readUntil(Supplier<Boolean> supplier) {
+        int start = cursor;
+        while (canRead() && supplier.get())
+            skip();
+        return string.substring(start, cursor);
+    }
+
     public String readUntil(char terminator) throws CommandParseException {
         StringBuilder stringBuilder = new StringBuilder();
-        boolean escaped = false;
         while (canRead()) {
             char c = read();
             if (c == terminator)

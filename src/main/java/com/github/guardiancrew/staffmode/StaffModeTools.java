@@ -17,7 +17,7 @@ public enum StaffModeTools {
     private final boolean glowing;
 
     StaffModeTools(String name, Material item, boolean glowing) {
-        this.name = TextUtils.translate(name);
+        this.name = TextUtils.format(name);
         this.material = item;
         this.glowing = glowing;
     }
