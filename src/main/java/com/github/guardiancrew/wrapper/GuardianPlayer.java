@@ -1,5 +1,6 @@
 package com.github.guardiancrew.wrapper;
 
+import com.github.guardiancrew.events.PlayerPunishEvent;
 import com.github.guardiancrew.punishment.Duration;
 import com.github.guardiancrew.punishment.Punishment;
 import com.github.guardiancrew.punishment.PunishmentType;
@@ -61,21 +62,24 @@ public class GuardianPlayer implements Writable {
     }
 
     public void punish(PunishmentType type, GuardianPlayer punisher, Duration duration, String reason, boolean ip) {
-        if (type != PunishmentType.WARN && hasPunishment(type)) {
-            punisher.sendPluginMessage("&c" + bukkitPlayer.getDisplayName() + " &7is already &c" + type.getPastTense());
-            return;
-        }
-        Punishment punishment = Punishment.builder(type, this)
-                .punisher(punisher)
-                .duration(duration)
-                .reason(reason)
-                .ip(ip)
-                .build();
-        duration.start();
-        punishments.add(punishment);
-        punishment.announce();
-        if (type == PunishmentType.BAN) {
-            bukkitPlayer.kickPlayer("You have been banned");
+        PlayerPunishEvent event = new PlayerPunishEvent(this, punisher, type, duration, reason, ip);
+        if (!event.isCancelled()) {
+            if (type != PunishmentType.WARN && hasPunishment(type)) {
+                punisher.sendPluginMessage("&c" + bukkitPlayer.getDisplayName() + " &7is already &c" + type.getPastTense());
+                return;
+            }
+            Punishment punishment = Punishment.builder(type, this)
+                    .punisher(punisher)
+                    .duration(duration)
+                    .reason(reason)
+                    .ip(ip)
+                    .build();
+            duration.start();
+            punishments.add(punishment);
+            punishment.announce();
+            if (type == PunishmentType.BAN) {
+                bukkitPlayer.kickPlayer("You have been banned");
+            }
         }
     }
 
