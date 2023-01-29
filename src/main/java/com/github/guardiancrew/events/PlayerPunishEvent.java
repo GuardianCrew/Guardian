@@ -1,15 +1,16 @@
 package com.github.guardiancrew.events;
 
 import com.github.guardiancrew.punishment.Duration;
-import com.github.guardiancrew.punishment.Punishment;
 import com.github.guardiancrew.punishment.PunishmentType;
 import com.github.guardiancrew.wrapper.GuardianPlayer;
-import jdk.internal.event.Event;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 
-public class PlayerPunishEvent extends Event implements Cancellable {
+public final class PlayerPunishEvent extends Event implements Cancellable {
 
     private boolean cancelled;
+    private static final HandlerList handlers = new HandlerList();
     GuardianPlayer player;
     GuardianPlayer punisher;
     PunishmentType punishmentType;
@@ -59,4 +60,13 @@ public class PlayerPunishEvent extends Event implements Cancellable {
     public void setCancelled(boolean b) {
         cancelled = b;
     }
+
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
 }
