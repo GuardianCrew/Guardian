@@ -1,0 +1,64 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+group = 'com.github.guardian'
+version = '1.0'
+
+repositories {
+    mavenLocal()
+    maven {
+        name = 'papermc-repo'
+        url = 'https://repo.papermc.io/repository/maven-public/'
+    }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+}
+
+dependencies {
+    implementation 'org.jetbrains:annotations:23.0.0'
+    compileOnly 'io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT'
+    compileOnly 'io.netty:netty-buffer:4.1.87.Final'
+    compileOnly 'org.apache.commons:commons-lang3:3.12.0'
+}
+
+def targetJavaVersion = 17
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+processResources {
+    filter ReplaceTokens, tokens: [
+            'version' : project.property('version')
+    ]
+    filteringCharset 'UTF-8'
+}
+
+Properties properties = new Properties()
+def jarDir
+if (project.rootProject.file('local.properties').exists()) {
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    jarDir = properties.getProperty('jarDir') as String
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release.set(targetJavaVersion)
+    }
+    jar {
+        archiveFileName.set("${rootProject.name}.jar")
+        if (jarDir != null) {
+            destinationDirectory.set(file(jarDir))
+        }
+    }
+}
