@@ -120,7 +120,7 @@ public final class Guardian extends JavaPlugin {
                  InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-}
+    }
 
     private void registerCommands() {
         try {

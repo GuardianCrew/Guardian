@@ -1,5 +1,5 @@
 name: Guardian
-version: '${project.version}'
+version: @version@
 main: com.github.guardiancrew.Guardian
 authors: [ The GuardianCrew ]
 description: wip
