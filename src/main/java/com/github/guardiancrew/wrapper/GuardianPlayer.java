@@ -63,6 +63,7 @@ public class GuardianPlayer implements Writable {
 
     public void punish(PunishmentType type, GuardianPlayer punisher, Duration duration, String reason, boolean ip) {
         PlayerPunishEvent event = new PlayerPunishEvent(this, punisher, type, duration, reason, ip);
+        Bukkit.getServer().getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
             if (type != PunishmentType.WARN && hasPunishment(type)) {
                 punisher.sendPluginMessage("&c" + bukkitPlayer.getDisplayName() + " &7is already &c" + type.getPastTense());
