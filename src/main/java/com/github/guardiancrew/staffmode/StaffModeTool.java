@@ -1,25 +1,34 @@
 package com.github.guardiancrew.staffmode;
 
 import com.github.guardiancrew.util.TextUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public enum StaffModeTools {
+public enum StaffModeTool {
 
-    TELEPORT("&9Teleport", Material.ENDER_PEARL, false),
-    FREEZE("&bFreeze", Material.PACKED_ICE, true);
+    TELEPORT("&9Teleport", Material.ENDER_PEARL, false, 0, () -> {
+        Bukkit.broadcastMessage("Teleport Item");
+    }),
+    FREEZE("&bFreeze", Material.PACKED_ICE, true, 1, () -> {
+        Bukkit.broadcastMessage("Freeze Item");
+    });
 
     private final String name;
     private final Material material;
     private final boolean glowing;
+    private final int slot;
+    private final Runnable runnable;
 
-    StaffModeTools(String name, Material item, boolean glowing) {
+    StaffModeTool(String name, Material item, boolean glowing, int slot, Runnable runnable) {
         this.name = TextUtils.format(name);
         this.material = item;
         this.glowing = glowing;
+        this.slot = slot;
+        this.runnable = runnable;
     }
 
     public String getName() {
@@ -39,5 +48,13 @@ public enum StaffModeTools {
             meta.addEnchant(Enchantment.MENDING, 1, true);
         item.setItemMeta(meta);
         return item;
+    }
+
+    public int getSlot() {
+        return slot;
+    }
+
+    public void run() {
+        runnable.run();
     }
 }
